@@ -30,6 +30,7 @@ import {
 import Orientation from 'react-native-orientation-locker';
 
 const STORAGE_KEY = 'AQUA_STATS_V1';
+const TANK_TASKS_STORAGE_KEY = 'AQUA_TANK_TASKS_V1';
 const DECAY_INTERVAL_MS = 60000;
 const DECAY_PER_STEP = 5;
 
@@ -177,6 +178,18 @@ export default function AquariumScreen() {
   const [taskModal, setTaskModal] = useState<TaskType>(null);
   const [taskProgress, setTaskProgress] = useState(0);
   const [inAquariumIds, setInAquariumIds] = useState<string[]>([]);
+  const [points, setPoints] = useState(0);
+
+  const loadPoints = useCallback(async () => {
+    try {
+      const raw = await AsyncStorage.getItem(TANK_TASKS_STORAGE_KEY);
+      if (!raw) return;
+      const data = JSON.parse(raw) as { points?: number };
+      setPoints(data.points ?? 0);
+    } catch {
+      setPoints(0);
+    }
+  }, []);
 
   const loadInAquarium = useCallback(async () => {
     try {
@@ -191,13 +204,14 @@ export default function AquariumScreen() {
 
   useFocusEffect(
     useCallback(() => {
+      loadPoints();
       loadInAquarium();
 
       Orientation.lockToPortrait();
       return () => {
         Orientation.unlockAllOrientations();
       };
-    }, [loadInAquarium]),
+    }, [loadPoints, loadInAquarium]),
   );
 
   const fishInAquarium = useMemo(
@@ -312,7 +326,7 @@ export default function AquariumScreen() {
                 </Text>
                 <View style={styles.badge}>
                   <Image source={require('../AquaAssets/images/points.png')} />
-                  <Text style={styles.badgeText}>24</Text>
+                  <Text style={styles.badgeText}>{points}</Text>
                 </View>
               </View>
             </View>
