@@ -8,10 +8,12 @@ import {
   Animated,
   Pressable,
   Modal,
+  Platform,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import Orientation from 'react-native-orientation-locker';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const TANK_TASKS_STORAGE_KEY = 'AQUA_TANK_TASKS_V1';
@@ -42,6 +44,15 @@ export default function BubblePopScreen() {
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const spawnRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const safeHeight = SCREEN_HEIGHT - insets.top - insets.bottom;
+
+  useFocusEffect(
+    useCallback(() => {
+      Orientation.lockToPortrait();
+      return () => {
+        Orientation.unlockAllOrientations();
+      };
+    }, []),
+  );
 
   const saveAndExit = useCallback(async () => {
     if (score <= 0) {
@@ -154,7 +165,12 @@ export default function BubblePopScreen() {
         ))}
       </View>
 
-      <Modal visible={gameOver} transparent animationType="fade">
+      <Modal
+        visible={gameOver}
+        transparent
+        animationType="fade"
+        statusBarTranslucent={Platform.OS === 'android'}
+      >
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
             <Text style={styles.modalTitle}>Water refreshed</Text>

@@ -8,10 +8,12 @@ import {
   ScrollView,
   Image,
   Dimensions,
+  Platform,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useNavigation } from '@react-navigation/native';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import Orientation from 'react-native-orientation-locker';
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const TANK_TASKS_STORAGE_KEY = 'AQUA_TANK_TASKS_V1';
@@ -122,6 +124,15 @@ export default function HueStreamScreen() {
     navigation.goBack();
   }, [navigation]);
 
+  useFocusEffect(
+    useCallback(() => {
+      Orientation.lockToPortrait();
+      return () => {
+        Orientation.unlockAllOrientations();
+      };
+    }, []),
+  );
+
   const playAgain = useCallback(() => {
     setOrder(shuffle(correctOrder));
     setSelectedIndex(null);
@@ -166,7 +177,12 @@ export default function HueStreamScreen() {
         ))}
       </ScrollView>
 
-      <Modal visible={showLeaveModal} transparent animationType="fade">
+      <Modal
+        visible={showLeaveModal}
+        transparent
+        animationType="fade"
+        statusBarTranslucent={Platform.OS === 'android'}
+      >
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
             <Text style={styles.modalTitle}>Leave Game?</Text>
@@ -191,7 +207,12 @@ export default function HueStreamScreen() {
         </View>
       </Modal>
 
-      <Modal visible={showSuccessModal} transparent animationType="fade">
+      <Modal
+        visible={showSuccessModal}
+        transparent
+        animationType="fade"
+        statusBarTranslucent={Platform.OS === 'android'}
+      >
         <View style={styles.modalOverlay}>
           <View style={styles.modalCard}>
             <Text style={styles.modalTitle}>Smooth flow</Text>
