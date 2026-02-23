@@ -8,6 +8,8 @@ import {
   StyleSheet,
   TouchableOpacity,
   ImageSourcePropType,
+  Platform,
+  Linking,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -294,29 +296,42 @@ export default function FishCollectionScreen() {
             </View>
           </View>
           <View style={styles.headerRight}>
-            <TouchableOpacity
-              style={styles.settingsBtn}
-              activeOpacity={0.8}
-              onPress={() => {
-                if (termsTimeoutRef.current)
-                  clearTimeout(termsTimeoutRef.current);
-                setShowTermsOfUse(true);
-                termsTimeoutRef.current = setTimeout(() => {
-                  setShowTermsOfUse(false);
-                  termsTimeoutRef.current = null;
-                }, 7000);
-              }}
-            >
-              <Image
-                source={require('../AquaAssets/images/settings.png')}
-                style={styles.settingsBtnIcon}
-                resizeMode="contain"
-              />
-            </TouchableOpacity>
+            {Platform.OS === 'ios' && (
+              <TouchableOpacity
+                style={styles.settingsBtn}
+                activeOpacity={0.8}
+                onPress={() => {
+                  if (termsTimeoutRef.current) {
+                    clearTimeout(termsTimeoutRef.current);
+                    termsTimeoutRef.current = null;
+                  }
+                  setShowTermsOfUse(prev => {
+                    const next = !prev;
+                    if (next) {
+                      termsTimeoutRef.current = setTimeout(() => {
+                        setShowTermsOfUse(false);
+                        termsTimeoutRef.current = null;
+                      }, 7000);
+                    }
+                    return next;
+                  });
+                }}
+              >
+                <Image
+                  source={require('../AquaAssets/images/settings.png')}
+                  style={styles.settingsBtnIcon}
+                  resizeMode="contain"
+                />
+              </TouchableOpacity>
+            )}
             {showTermsOfUse && (
               <Pressable
                 style={styles.termsOfUseBtn}
-                onPress={() => setShowTermsOfUse(false)}
+                onPress={() =>
+                  Linking.openURL(
+                    'https://www.termsfeed.com/live/df59e493-abff-4ac4-9ec1-366a92930b71',
+                  )
+                }
               >
                 <Text style={styles.termsOfUseBtnText}>Terms of Use</Text>
               </Pressable>
@@ -464,10 +479,15 @@ const styles = StyleSheet.create({
     height: 24,
   },
   termsOfUseBtn: {
-    backgroundColor: '#011D5A',
-    paddingHorizontal: 14,
-    paddingVertical: 10,
+    backgroundColor: '#040523',
+    width: 130,
     borderRadius: 12,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    top: 50,
+    right: 5,
+    height: 36,
   },
   termsOfUseBtnText: {
     color: '#fff',

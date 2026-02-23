@@ -18,6 +18,8 @@ import {
   Dimensions,
   ImageSourcePropType,
   ScrollView,
+  TouchableOpacity,
+  Linking,
   Platform,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -179,6 +181,8 @@ export default function AquariumScreen() {
   const [taskProgress, setTaskProgress] = useState(0);
   const [inAquariumIds, setInAquariumIds] = useState<string[]>([]);
   const [points, setPoints] = useState(0);
+  const [showTermsOfUse, setShowTermsOfUse] = useState(false);
+  const termsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const loadPoints = useCallback(async () => {
     try {
@@ -261,6 +265,12 @@ export default function AquariumScreen() {
   }, [load]);
 
   useEffect(() => {
+    return () => {
+      if (termsTimeoutRef.current) clearTimeout(termsTimeoutRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
     const id = setInterval(() => {
       setStats(prev => {
         const next = {
@@ -317,9 +327,9 @@ export default function AquariumScreen() {
             resizeMode="cover"
           />
 
-          <View style={styles.swimArea} pointerEvents="none">
-            <View style={styles.header}>
-              <View>
+          <View style={styles.swimArea} pointerEvents="box-none">
+            <View style={styles.header} pointerEvents="box-none">
+              <View pointerEvents="none">
                 <Text style={styles.title}>Your Aquarium</Text>
                 <Text style={styles.subtitle}>
                   A calm space that grows with daily care
@@ -328,6 +338,48 @@ export default function AquariumScreen() {
                   <Image source={require('../AquaAssets/images/points.png')} />
                   <Text style={styles.badgeText}>{points}</Text>
                 </View>
+              </View>
+              <View style={styles.headerRight}>
+                {Platform.OS === 'ios' && (
+                  <TouchableOpacity
+                    style={styles.settingsBtn}
+                    activeOpacity={0.8}
+                    onPress={() => {
+                      if (termsTimeoutRef.current) {
+                        clearTimeout(termsTimeoutRef.current);
+                        termsTimeoutRef.current = null;
+                      }
+                      setShowTermsOfUse(prev => {
+                        const next = !prev;
+                        if (next) {
+                          termsTimeoutRef.current = setTimeout(() => {
+                            setShowTermsOfUse(false);
+                            termsTimeoutRef.current = null;
+                          }, 7000);
+                        }
+                        return next;
+                      });
+                    }}
+                  >
+                    <Image
+                      source={require('../AquaAssets/images/settings.png')}
+                      style={styles.settingsBtnIcon}
+                      resizeMode="contain"
+                    />
+                  </TouchableOpacity>
+                )}
+                {showTermsOfUse && (
+                  <Pressable
+                    style={styles.termsOfUseBtn}
+                    onPress={() =>
+                      Linking.openURL(
+                        'https://www.termsfeed.com/live/df59e493-abff-4ac4-9ec1-366a92930b71',
+                      )
+                    }
+                  >
+                    <Text style={styles.termsOfUseBtnText}>Terms of Use</Text>
+                  </Pressable>
+                )}
               </View>
             </View>
 
@@ -836,6 +888,34 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
   },
+  headerRight: {
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+    gap: 8,
+  },
+  termsOfUseBtn: {
+    backgroundColor: '#040523',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+  },
+  termsOfUseBtnText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  settingsBtn: {
+    width: 48,
+    height: 48,
+    borderRadius: 52,
+    backgroundColor: '#040523',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  settingsBtnIcon: {
+    width: 24,
+    height: 24,
+  },
 
   aquariumWrap: {
     height: 420,
@@ -922,7 +1002,7 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 13,
     fontWeight: '600',
-    width: 36,
+    width: 46,
     textAlign: 'right',
   },
   sectionTitle: {

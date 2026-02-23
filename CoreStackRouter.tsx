@@ -1,10 +1,10 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import AquaFishinTab from './AquaFishinTab';
-import VideoLoaderScreen from '../AquaFishinScreens/VideoLoaderScreen';
-import OnboardScreens from '../AquaFishinScreens/OnboardScreens';
-import BubblePopScreen from '../AquaFishinScreens/BubblePopScreen';
-import HueStreamScreen from '../AquaFishinScreens/HueStreamScreen';
+import VideoLoaderScreen from './AquaFishinCareDailyTank/AquaFishinScreens/VideoLoaderScreen';
+import OnboardScreens from './AquaFishinCareDailyTank/AquaFishinScreens/OnboardScreens';
+import AquaFishinTab from './AquaFishinCareDailyTank/AquaFishinNavigation/AquaFishinTab';
+import BubblePopScreen from './AquaFishinCareDailyTank/AquaFishinScreens/BubblePopScreen';
+import HueStreamScreen from './AquaFishinCareDailyTank/AquaFishinScreens/HueStreamScreen';
 
 export type StackList = {
   VideoLoaderScreen: undefined;
@@ -19,7 +19,7 @@ export type StackList = {
 
 const Stack = createStackNavigator<StackList>();
 
-const AquaFishinStack: React.FC = () => {
+const CoreStackRouter: React.FC = () => {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="VideoLoaderScreen" component={VideoLoaderScreen} />
@@ -31,4 +31,4 @@ const AquaFishinStack: React.FC = () => {
   );
 };
 
-export default AquaFishinStack;
+export default CoreStackRouter;

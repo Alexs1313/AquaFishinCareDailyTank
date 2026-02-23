@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,8 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
+  Linking,
+  Platform,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -45,6 +47,8 @@ export default function TankTasksScreen() {
   const [completed, setCompleted] = useState<Record<TaskId, boolean>>(
     defaultState.completed,
   );
+  const [showTermsOfUse, setShowTermsOfUse] = useState(false);
+  const termsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const load = useCallback(async () => {
     try {
@@ -67,6 +71,12 @@ export default function TankTasksScreen() {
       load();
     }, [load]),
   );
+
+  useEffect(() => {
+    return () => {
+      if (termsTimeoutRef.current) clearTimeout(termsTimeoutRef.current);
+    };
+  }, []);
 
   const persist = useCallback(async (next: StoredState) => {
     setPoints(next.points);
@@ -109,9 +119,47 @@ export default function TankTasksScreen() {
               <Text style={styles.pointsText}>{points}</Text>
             </View>
           </View>
-          <TouchableOpacity style={styles.settingsBtn} activeOpacity={0.8}>
-            <Image source={require('../AquaAssets/images/settings.png')} />
-          </TouchableOpacity>
+          <View style={styles.headerRight}>
+            {Platform.OS === 'ios' && (
+              <TouchableOpacity
+                style={styles.settingsBtn}
+                activeOpacity={0.8}
+                onPress={() => {
+                  if (termsTimeoutRef.current) {
+                    clearTimeout(termsTimeoutRef.current);
+                    termsTimeoutRef.current = null;
+                  }
+                  setShowTermsOfUse(prev => {
+                    const next = !prev;
+                    if (next) {
+                      termsTimeoutRef.current = setTimeout(() => {
+                        setShowTermsOfUse(false);
+                        termsTimeoutRef.current = null;
+                      }, 7000);
+                    }
+                    return next;
+                  });
+                }}
+              >
+                <Image
+                  source={require('../AquaAssets/images/settings.png')}
+                  resizeMode="contain"
+                />
+              </TouchableOpacity>
+            )}
+            {showTermsOfUse && (
+              <Pressable
+                style={styles.termsOfUseBtn}
+                onPress={() =>
+                  Linking.openURL(
+                    'https://www.termsfeed.com/live/df59e493-abff-4ac4-9ec1-366a92930b71',
+                  )
+                }
+              >
+                <Text style={styles.termsOfUseBtnText}>Terms of Use</Text>
+              </Pressable>
+            )}
+          </View>
         </View>
         <View style={{ paddingHorizontal: 20, gap: 12 }}>
           {TASKS.map(task => {
@@ -232,6 +280,30 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '700',
   },
+  headerRight: {
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+    gap: 8,
+  },
+  termsOfUseBtn: {
+    backgroundColor: '#011D5A',
+    paddingHorizontal: 14,
+    paddingVertical: 10,
+    borderRadius: 12,
+  },
+  termsOfUseBtnText: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  settingsBtn: {
+    width: 48,
+    height: 48,
+    borderRadius: 22,
+    backgroundColor: '#040523',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   scroll: {
     flex: 1,
   },
@@ -334,13 +406,5 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 14,
     fontWeight: '700',
-  },
-  settingsBtn: {
-    width: 48,
-    height: 48,
-    borderRadius: 22,
-    backgroundColor: '#040523',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });

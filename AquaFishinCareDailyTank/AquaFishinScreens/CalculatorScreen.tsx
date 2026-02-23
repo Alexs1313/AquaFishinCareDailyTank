@@ -191,15 +191,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   headerTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '700',
     color: '#fff',
     marginBottom: 4,
+    width: '80%',
   },
   headerSubtitle: {
     fontSize: 14,
     color: 'rgba(255,255,255,0.85)',
-    lineHeight: 20,
+    marginBottom: 20,
+    width: '80%',
   },
   label: {
     fontSize: 13,
