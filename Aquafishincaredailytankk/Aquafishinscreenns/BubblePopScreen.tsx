@@ -71,8 +71,8 @@ export default function BubblePopScreen() {
       const careTankRaw = await AsyncStorage.getItem(careTankTasksStorageKey);
       const careTankData = careTankRaw
         ? JSON.parse(careTankRaw)
-        : { points: 0, completed: {} };
-      const careTankCurrentPoints = careTankData.points ?? 0;
+        : { points: 50, completed: {} };
+      const careTankCurrentPoints = careTankData.points ?? 50;
       await AsyncStorage.setItem(
         careTankTasksStorageKey,
         JSON.stringify({

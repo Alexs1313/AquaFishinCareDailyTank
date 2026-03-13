@@ -5,6 +5,7 @@ import { useFocusEffect } from '@react-navigation/native';
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
+  Animated,
   View,
   Text,
   ScrollView,
@@ -87,15 +88,15 @@ const careTankDecorList: CollectionItem[] = [
   },
   {
     id: 'decor2',
-    name: 'Sand Castle',
-    price: 100,
-    image: require('../AquaAssets/images/decor2.png'),
-  },
-  {
-    id: 'decor3',
     name: 'Green Sprigs',
     price: 50,
     image: require('../AquaAssets/images/decor3.png'),
+  },
+  {
+    id: 'decor3',
+    name: 'Sand Castle',
+    price: 100,
+    image: require('../AquaAssets/images/decor2.png'),
   },
   {
     id: 'decor4',
@@ -130,8 +131,8 @@ const careTankDecorList: CollectionItem[] = [
 ];
 
 const careTankDefaultCollection: CollectionState = {
-  unlocked: ['fish1', 'fish2'],
-  inAquarium: ['fish1', 'fish2'],
+  unlocked: ['fish1', 'fish2', 'decor1', 'decor2'],
+  inAquarium: ['fish1', 'fish2', 'decor1', 'decor2'],
 };
 
 export function getCollectionItemById(id: string): {
@@ -163,9 +164,73 @@ export function getCollectionItemById(id: string): {
   return null;
 }
 
+function CareTankCollectionCardImage({ item }: { item: CollectionItem }) {
+  const careTankIsFish = item.id.startsWith('fish');
+  const careTankFloatAnim = useRef(new Animated.Value(0)).current;
+
+  useEffect(() => {
+    if (!careTankIsFish) return;
+
+    const careTankIdNum = Number(item.id.replace('fish', '')) || 1;
+    const careTankDuration = 1300 + careTankIdNum * 90;
+    const careTankFloatLoop = Animated.loop(
+      Animated.sequence([
+        Animated.timing(careTankFloatAnim, {
+          toValue: 1,
+          duration: careTankDuration,
+          useNativeDriver: true,
+        }),
+        Animated.timing(careTankFloatAnim, {
+          toValue: 0,
+          duration: careTankDuration,
+          useNativeDriver: true,
+        }),
+      ]),
+    );
+
+    careTankFloatLoop.start();
+    return () => careTankFloatLoop.stop();
+  }, [careTankFloatAnim, careTankIsFish, item.id]);
+
+  if (!careTankIsFish) {
+    return (
+      <Image
+        source={item.image}
+        style={styles.careTankCardImage}
+        resizeMode="contain"
+      />
+    );
+  }
+
+  const careTankTranslateY = careTankFloatAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [2, -3],
+  });
+  const careTankScale = careTankFloatAnim.interpolate({
+    inputRange: [0, 1],
+    outputRange: [1, 1.03],
+  });
+
+  return (
+    <Animated.Image
+      source={item.image}
+      style={[
+        styles.careTankCardImage,
+        {
+          transform: [
+            { translateY: careTankTranslateY },
+            { scale: careTankScale },
+          ],
+        },
+      ]}
+      resizeMode="contain"
+    />
+  );
+}
+
 export default function FishCollectionScreen() {
   const careTankInsets = useSafeAreaInsets();
-  const [careTankPoints, setCareTankPoints] = useState(0);
+  const [careTankPoints, setCareTankPoints] = useState(50);
   const [careTankUnlocked, setCareTankUnlocked] = useState<string[]>([]);
   const [careTankInAquarium, setCareTankInAquarium] = useState<string[]>([]);
   const [careTankTab, setCareTankTab] = useState<CollectionTab>('fish');
@@ -181,9 +246,9 @@ export default function FishCollectionScreen() {
       const careTankRaw = await AsyncStorage.getItem(careTankTasksStorageKey);
       if (!careTankRaw) return;
       const careTankData = JSON.parse(careTankRaw) as TankTasksState;
-      setCareTankPoints(careTankData.points ?? 0);
+      setCareTankPoints(careTankData.points ?? 50);
     } catch {
-      setCareTankPoints(0);
+      setCareTankPoints(50);
     }
   };
 
@@ -200,22 +265,29 @@ export default function FishCollectionScreen() {
         return;
       }
       const careTankData = JSON.parse(careTankRaw) as CollectionState;
-      const careTankDecorIds = new Set(careTankDecorList.map(item => item.id));
-      const careTankUnlockedWithoutDecor = (
-        careTankData.unlocked ?? careTankDefaultCollection.unlocked
-      ).filter(id => !careTankDecorIds.has(id));
-      const careTankInAquariumWithoutDecor = (
-        careTankData.inAquarium ?? careTankDefaultCollection.inAquarium
-      ).filter(id => !careTankDecorIds.has(id));
-      const careTankCollectionWithDefaultFish: CollectionState = {
-        unlocked: [...new Set([...careTankUnlockedWithoutDecor, 'fish2'])],
-        inAquarium: [...new Set([...careTankInAquariumWithoutDecor, 'fish2'])],
+      const careTankCollectionWithDefaultItems: CollectionState = {
+        unlocked: [
+          ...new Set([
+            ...(careTankData.unlocked ?? careTankDefaultCollection.unlocked),
+            'fish2',
+            'decor1',
+            'decor2',
+          ]),
+        ],
+        inAquarium: [
+          ...new Set([
+            ...(careTankData.inAquarium ?? careTankDefaultCollection.inAquarium),
+            'fish2',
+            'decor1',
+            'decor2',
+          ]),
+        ],
       };
-      setCareTankUnlocked(careTankCollectionWithDefaultFish.unlocked);
-      setCareTankInAquarium(careTankCollectionWithDefaultFish.inAquarium);
+      setCareTankUnlocked(careTankCollectionWithDefaultItems.unlocked);
+      setCareTankInAquarium(careTankCollectionWithDefaultItems.inAquarium);
       await AsyncStorage.setItem(
         COLLECTION_STORAGE_KEY,
-        JSON.stringify(careTankCollectionWithDefaultFish),
+        JSON.stringify(careTankCollectionWithDefaultItems),
       );
     } catch {
       setCareTankUnlocked(careTankDefaultCollection.unlocked);
@@ -253,7 +325,7 @@ export default function FishCollectionScreen() {
       const careTankRaw = await AsyncStorage.getItem(careTankTasksStorageKey);
       const careTankData = careTankRaw
         ? (JSON.parse(careTankRaw) as TankTasksState)
-        : { points: 0, completed: {} };
+        : { points: 50, completed: {} };
       await AsyncStorage.setItem(
         careTankTasksStorageKey,
         JSON.stringify({ ...careTankData, points: careTankNewPoints }),
@@ -402,11 +474,7 @@ export default function FishCollectionScreen() {
               <View key={item.id} style={styles.careTankCardWrap}>
                 <View style={styles.careTankCard}>
                   <View style={styles.careTankCardImageWrap}>
-                    <Image
-                      source={item.image}
-                      style={styles.careTankCardImage}
-                      resizeMode="contain"
-                    />
+                    <CareTankCollectionCardImage item={item} />
                   </View>
                   <Text style={styles.careTankCardName} numberOfLines={1}>
                     {item.name}

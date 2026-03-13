@@ -220,7 +220,7 @@ export default function AquariumScreen() {
   const [careTankInAquariumIds, setCareTankInAquariumIds] = useState<string[]>(
     [],
   );
-  const [careTankPoints, setCareTankPoints] = useState(0);
+  const [careTankPoints, setCareTankPoints] = useState(50);
   const [careTankShowTermsOfUse, setCareTankShowTermsOfUse] = useState(false);
   const careTankTermsTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(
     null,
@@ -231,9 +231,9 @@ export default function AquariumScreen() {
       const careTankRaw = await AsyncStorage.getItem(careTankTasksStorageKey);
       if (!careTankRaw) return;
       const careTankData = JSON.parse(careTankRaw) as { points?: number };
-      setCareTankPoints(careTankData.points ?? 0);
+      setCareTankPoints(careTankData.points ?? 50);
     } catch {
-      setCareTankPoints(0);
+      setCareTankPoints(50);
     }
   };
 
@@ -290,8 +290,31 @@ export default function AquariumScreen() {
   const careTankLoad = async () => {
     try {
       const careTankRaw = await AsyncStorage.getItem(careTankStorageKey);
-      if (!careTankRaw) return;
+      if (!careTankRaw) {
+        setCareTankStats(careTankDefaultStats);
+        await AsyncStorage.setItem(
+          careTankStorageKey,
+          JSON.stringify(careTankDefaultStats),
+        );
+        return;
+      }
       const careTankParsed = JSON.parse(careTankRaw) as Stats;
+      const careTankIsLegacyZeroState =
+        (careTankParsed.mood ?? 0) === 0 &&
+        (careTankParsed.cleanliness ?? 0) === 0 &&
+        (careTankParsed.satiety ?? 0) === 0;
+      if (careTankIsLegacyZeroState) {
+        const careTankResetStats = {
+          ...careTankDefaultStats,
+          lastUpdate: Date.now(),
+        };
+        setCareTankStats(careTankResetStats);
+        await AsyncStorage.setItem(
+          careTankStorageKey,
+          JSON.stringify(careTankResetStats),
+        );
+        return;
+      }
       const careTankNow = Date.now();
       const careTankDecayed = careTankApplyDecay(careTankParsed, careTankNow);
       setCareTankStats(careTankDecayed);
@@ -303,6 +326,12 @@ export default function AquariumScreen() {
       }
     } catch {
       setCareTankStats(careTankDefaultStats);
+      try {
+        await AsyncStorage.setItem(
+          careTankStorageKey,
+          JSON.stringify(careTankDefaultStats),
+        );
+      } catch {}
     }
   };
 
@@ -1088,15 +1117,15 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     right: 0,
-    bottom: 20,
+    bottom: 0,
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-around',
     paddingHorizontal: 12,
   },
   careTankDecorInTank: {
-    width: 44,
-    height: 44,
+    width: 144,
+    height: 124,
     marginVertical: 4,
   },
   careTankFishCardRow: {

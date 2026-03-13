@@ -40,14 +40,16 @@ const careTankTasks: Task[] = [
 ];
 
 const careTankDefaultState: StoredState = {
-  points: 0,
+  points: 50,
   completed: { clean: false, feed: false, play: false },
 };
 
 export default function TankTasksScreen() {
   const careTankInsets = useSafeAreaInsets();
   const careTankNavigation = useNavigation();
-  const [careTankPoints, setCareTankPoints] = useState(0);
+  const [careTankPoints, setCareTankPoints] = useState(
+    careTankDefaultState.points,
+  );
   const [careTankCompleted, setCareTankCompleted] = useState<
     Record<TaskId, boolean>
   >(careTankDefaultState.completed);
@@ -59,9 +61,17 @@ export default function TankTasksScreen() {
   const careTankLoad = async () => {
     try {
       const careTankRaw = await AsyncStorage.getItem(careTankTasksStorageKey);
-      if (!careTankRaw) return;
+      if (!careTankRaw) {
+        setCareTankPoints(careTankDefaultState.points);
+        setCareTankCompleted(careTankDefaultState.completed);
+        await AsyncStorage.setItem(
+          careTankTasksStorageKey,
+          JSON.stringify(careTankDefaultState),
+        );
+        return;
+      }
       const careTankData = JSON.parse(careTankRaw) as StoredState;
-      setCareTankPoints(careTankData.points ?? 0);
+      setCareTankPoints(careTankData.points ?? careTankDefaultState.points);
       setCareTankCompleted({
         ...careTankDefaultState.completed,
         ...(careTankData.completed || {}),
