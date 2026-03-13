@@ -4,16 +4,16 @@ workflows:
     max_build_duration: 120
     instance_type: mac_mini_m2
     integrations:
-      app_store_connect: AquaFishinCareAPIKey
+      app_store_connect: CareTankAPIKey
     environment:
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: com.AquaFishinCareDailyTank
+        bundle_identifier: com.carmsdfj.ffsjkdo.sdf
       vars:
-        BUNDLE_ID: com.AquaFishinCareDailyTank
+        BUNDLE_ID: com.carmsdfj.ffsjkdo.sdf
         XCODE_WORKSPACE: AquaFishinCareDailyTank.xcworkspace
         XCODE_SCHEME: AquaFishinCareDailyTank
-        APP_STORE_APPLE_ID: 6759556943
+        APP_STORE_APPLE_ID: 6760539157
     scripts:
       - name: Install npm dependencies
         script: |
@@ -44,4 +44,4 @@ workflows:
       app_store_connect:
         auth: integration
         submit_to_app_store: true
-        copyright: 'Fishlnq Aqua- Care Daily 2026'
+        copyright: 'Hans Van Vaerenbergh 2026'

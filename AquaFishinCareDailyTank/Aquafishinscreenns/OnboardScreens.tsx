@@ -1,3 +1,5 @@
+// OnboardScreens
+
 import React, { useState } from 'react';
 import {
   View,
@@ -10,8 +12,10 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
+
 import type { StackNavigationProp } from '@react-navigation/stack';
-import type { StackList } from '../AquaFishinNavigation/AquaFishinStack';
+
+import type { StackList } from '../[Aquafishinnnavigation]/AquaFishinStack';
 
 type NavigationProp = StackNavigationProp<StackList, 'OnboardScreens'>;
 
@@ -23,7 +27,7 @@ type SlideItem = {
   image?: ImageSourcePropType;
 };
 
-const SLIDES: SlideItem[] = [
+const careTankSlides: SlideItem[] = [
   {
     title: 'A tank that lives with your care',
     description:
@@ -43,53 +47,67 @@ const SLIDES: SlideItem[] = [
 ];
 
 export default function OnboardScreens() {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const insets = useSafeAreaInsets();
-  const navigation = useNavigation<NavigationProp>();
+  const [careTankCurrentIndex, setCareTankCurrentIndex] = useState(0);
+  const careTankInsets = useSafeAreaInsets();
+  const careTankNavigation = useNavigation<NavigationProp>();
 
-  const slide = SLIDES[currentIndex];
+  const careTankSlide = careTankSlides[careTankCurrentIndex];
 
-  const goNext = () => {
-    if (currentIndex < SLIDES.length - 1) {
-      setCurrentIndex(currentIndex + 1);
+  const careTankGoNext = () => {
+    if (careTankCurrentIndex < careTankSlides.length - 1) {
+      setCareTankCurrentIndex(careTankCurrentIndex + 1);
     } else {
-      navigation.navigate('AquaFishinTab');
+      careTankNavigation.navigate('AquaFishinTab');
     }
   };
 
   return (
     <ImageBackground
       source={require('../AquaAssets/images/onboard/back.png')}
-      style={onboardBg}
+      style={careTankOnboardBg}
     >
       <ScrollView
         showsVerticalScrollIndicator={false}
-        contentContainerStyle={onboardScrollContent}
+        contentContainerStyle={careTankOnboardScrollContent}
       >
-        <View style={[onboardContainer, { paddingTop: insets.top }]}>
-          <Image source={slide.image} style={onboardImage} resizeMode="contain" />
+        <View
+          style={[careTankOnboardContainer, { paddingTop: careTankInsets.top }]}
+        >
+          <Image
+            source={careTankSlide.image}
+            style={careTankOnboardImage}
+            resizeMode="contain"
+          />
 
-          <View style={onboardCard}>
-            <Text style={onboardTitle}>{slide.title}</Text>
-            <Text style={onboardDescription}>{slide.description}</Text>
+          <View style={careTankOnboardCard}>
+            <Text style={careTankOnboardTitle}>{careTankSlide.title}</Text>
+            <Text style={careTankOnboardDescription}>
+              {careTankSlide.description}
+            </Text>
 
-            <View style={onboardDots}>
-              {SLIDES.map((_, i) => (
+            <View style={careTankOnboardDots}>
+              {careTankSlides.map((_, careTankIndex) => (
                 <View
-                  key={i}
-                  style={[onboardDot, i === currentIndex && onboardDotActive]}
+                  key={careTankIndex}
+                  style={[
+                    careTankOnboardDot,
+                    careTankIndex === careTankCurrentIndex &&
+                      careTankOnboardDotActive,
+                  ]}
                 />
               ))}
             </View>
 
             <Pressable
-              onPress={goNext}
+              onPress={careTankGoNext}
               style={({ pressed }) => [
-                onboardButton,
-                pressed && onboardButtonPressed,
+                careTankOnboardButton,
+                pressed && careTankOnboardButtonPressed,
               ]}
             >
-              <Text style={onboardButtonText}>{slide.buttonText}</Text>
+              <Text style={careTankOnboardButtonText}>
+                {careTankSlide.buttonText}
+              </Text>
             </Pressable>
           </View>
         </View>
@@ -98,22 +116,22 @@ export default function OnboardScreens() {
   );
 }
 
-const onboardBg = { flex: 1 };
+const careTankOnboardBg = { flex: 1 };
 
-const onboardScrollContent = { flexGrow: 1 };
+const careTankOnboardScrollContent = { flexGrow: 1 };
 
-const onboardContainer = {
+const careTankOnboardContainer = {
   flex: 1,
   justifyContent: 'center' as const,
   alignItems: 'center' as const,
   paddingVertical: 20,
 };
 
-const onboardImage = {
+const careTankOnboardImage = {
   width: '100%' as const,
 };
 
-const onboardCard = {
+const careTankOnboardCard = {
   backgroundColor: '#040523',
   borderRadius: 12,
   paddingHorizontal: 24,
@@ -123,51 +141,51 @@ const onboardCard = {
   marginTop: 16,
 };
 
-const onboardTitle = {
+const careTankOnboardTitle = {
   fontSize: 24,
   fontWeight: '700' as const,
   color: '#fff',
   marginBottom: 12,
 };
 
-const onboardDescription = {
+const careTankOnboardDescription = {
   fontSize: 15,
   color: 'rgba(255, 255, 255, 0.8)',
   lineHeight: 22,
   marginBottom: 24,
 };
 
-const onboardDots = {
+const careTankOnboardDots = {
   flexDirection: 'row' as const,
   justifyContent: 'center' as const,
   gap: 3,
   marginBottom: 24,
 };
 
-const onboardDot = {
+const careTankOnboardDot = {
   width: 5,
   height: 4,
   borderRadius: 2,
   backgroundColor: 'rgba(255, 255, 255, 0.5)',
 };
 
-const onboardDotActive = {
+const careTankOnboardDotActive = {
   backgroundColor: '#45ACEC',
   width: 16,
 };
 
-const onboardButton = {
+const careTankOnboardButton = {
   backgroundColor: '#FF9600',
   paddingVertical: 16,
   borderRadius: 12,
   alignItems: 'center' as const,
 };
 
-const onboardButtonPressed = {
+const careTankOnboardButtonPressed = {
   opacity: 0.9,
 };
 
-const onboardButtonText = {
+const careTankOnboardButtonText = {
   color: '#fff',
   fontSize: 17,
   fontWeight: '700' as const,

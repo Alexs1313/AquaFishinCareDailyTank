@@ -1,10 +1,10 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
-import VideoLoaderScreen from './AquaFishinCareDailyTank/AquaFishinScreens/VideoLoaderScreen';
-import OnboardScreens from './AquaFishinCareDailyTank/AquaFishinScreens/OnboardScreens';
-import AquaFishinTab from './AquaFishinCareDailyTank/AquaFishinNavigation/AquaFishinTab';
-import BubblePopScreen from './AquaFishinCareDailyTank/AquaFishinScreens/BubblePopScreen';
-import HueStreamScreen from './AquaFishinCareDailyTank/AquaFishinScreens/HueStreamScreen';
+import VideoLoaderScreen from './Aquafishincaredailytank/Aquafishinscreenns/VideoLoaderScreen';
+import OnboardScreens from './Aquafishincaredailytank/Aquafishinscreenns/OnboardScreens';
+import AquaFishinTab from './Aquafishincaredailytank/[Aquafishinnnavigation]/AquaFishinTab';
+import BubblePopScreen from './Aquafishincaredailytank/Aquafishinscreenns/BubblePopScreen';
+import HueStreamScreen from './Aquafishincaredailytank/Aquafishinscreenns/HueStreamScreen';
 
 export type StackList = {
   VideoLoaderScreen: undefined;

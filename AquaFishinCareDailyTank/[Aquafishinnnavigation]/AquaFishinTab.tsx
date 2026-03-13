@@ -1,9 +1,9 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Image, StyleSheet, View } from 'react-native';
-import AquariumScreen from '../AquaFishinScreens/AquariumScreen';
-import TankTasksScreen from '../AquaFishinScreens/TankTasksScreen';
-import FishCollectionScreen from '../AquaFishinScreens/FishCollectionScreen';
-import CalculatorScreen from '../AquaFishinScreens/CalculatorScreen';
+import AquariumScreen from '../Aquafishinscreenns/AquariumScreen';
+import TankTasksScreen from '../Aquafishinscreenns/TankTasksScreen';
+import FishCollectionScreen from '../Aquafishinscreenns/FishCollectionScreen';
+import CalculatorScreen from '../Aquafishinscreenns/CalculatorScreen';
 
 const Tab = createBottomTabNavigator();
 
