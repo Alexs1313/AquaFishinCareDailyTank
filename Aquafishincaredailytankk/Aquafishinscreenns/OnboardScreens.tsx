@@ -31,7 +31,7 @@ const careTankSlides: SlideItem[] = [
   {
     title: 'A tank that lives with your care',
     description:
-      'Feed your fish, keep the water clean, and tap to play. Watch Cleanliness, Hunger, and Mood shift in real time as your aquarium settles into balance.',
+      'Feed your fish, keep the water clean, and tap to care for them. Watch Cleanliness, Hunger, and Mood shift in real time as your aquarium settles into balance.',
     buttonText: 'Continue',
     showProgressBars: true,
     image: require('../AquaAssets/images/onboard/im1.png'),
@@ -39,7 +39,7 @@ const careTankSlides: SlideItem[] = [
   {
     title: 'Daily tasks, calm rewards',
     description:
-      'Complete simple Tank Tasks, earn points, and unlock new fish and decor. Play Bubble Pop, Swipe Cleaner, and Hue Stream to collect extra points — then use the Water Change Calculator for your real aquarium.',
+      'Complete simple Tank Tasks, earn points, and unlock new fish and decor. Dive Bubble Pop, Swipe Cleaner, and Hue Stream to collect extra points — then use the Water Change Calculator for your real aquarium.',
     buttonText: 'Start Aquarium',
     showProgressBars: false,
     image: require('../AquaAssets/images/onboard/im2.png'),
