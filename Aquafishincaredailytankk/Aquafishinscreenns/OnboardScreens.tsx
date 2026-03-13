@@ -73,11 +73,7 @@ export default function OnboardScreens() {
         <View
           style={[careTankOnboardContainer, { paddingTop: careTankInsets.top }]}
         >
-          <Image
-            source={careTankSlide.image}
-            style={careTankOnboardImage}
-            resizeMode="contain"
-          />
+          <Image source={careTankSlide.image} style={careTankOnboardImage} />
 
           <View style={careTankOnboardCard}>
             <Text style={careTankOnboardTitle}>{careTankSlide.title}</Text>
@@ -128,7 +124,10 @@ const careTankOnboardContainer = {
 };
 
 const careTankOnboardImage = {
-  width: '100%' as const,
+  width: 345,
+  height: 450,
+  borderRadius: 12,
+  overflow: 'hidden',
 };
 
 const careTankOnboardCard = {

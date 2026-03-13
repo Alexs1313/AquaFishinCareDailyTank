@@ -38,7 +38,7 @@ const careTankFishList: CollectionItem[] = [
     id: 'fish1',
     name: 'Bubbles',
     price: 0,
-    image: require('../AquaAssets/images/fish.png'),
+    image: require('../AquaAssets/images/fish8.png'),
   },
   {
     id: 'fish2',
@@ -75,12 +75,6 @@ const careTankFishList: CollectionItem[] = [
     name: 'Ripple',
     price: 50,
     image: require('../AquaAssets/images/fish7.png'),
-  },
-  {
-    id: 'fish8',
-    name: 'Nemoa',
-    price: 60,
-    image: require('../AquaAssets/images/fish8.png'),
   },
 ];
 
@@ -368,7 +362,7 @@ export default function FishCollectionScreen() {
                 style={styles.careTankTermsOfUseBtn}
                 onPress={() =>
                   Linking.openURL(
-                    'https://www.termsfeed.com/live/df59e493-abff-4ac4-9ec1-366a92930b71',
+                    'https://www.termsfeed.com/live/95958dbe-1f11-40bf-8198-ad9a174d6f95',
                   )
                 }
               >

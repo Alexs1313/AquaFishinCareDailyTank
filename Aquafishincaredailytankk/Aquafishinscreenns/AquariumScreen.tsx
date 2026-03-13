@@ -433,7 +433,7 @@ export default function AquariumScreen() {
                     style={styles.careTankTermsOfUseBtn}
                     onPress={() =>
                       Linking.openURL(
-                        'https://www.termsfeed.com/live/df59e493-abff-4ac4-9ec1-366a92930b71',
+                        'https://www.termsfeed.com/live/95958dbe-1f11-40bf-8198-ad9a174d6f95',
                       )
                     }
                   >
@@ -719,7 +719,7 @@ function SwimmingFishModal({
         hitSlop={8}
       >
         <Image
-          source={require('../AquaAssets/images/fish.png')}
+          source={require('../AquaAssets/images/fish7.png')}
           style={careTankModalFishStyle.careTankImage}
           resizeMode="contain"
         />
@@ -1063,8 +1063,8 @@ const styles = StyleSheet.create({
   },
 
   careTankAquariumWrap: {
-    height: 420,
-    borderRadius: 16,
+    height: 400,
+
     overflow: 'hidden',
     marginBottom: 16,
   },

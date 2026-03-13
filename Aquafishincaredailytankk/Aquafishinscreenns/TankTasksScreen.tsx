@@ -163,7 +163,7 @@ export default function TankTasksScreen() {
                 style={styles.careTankTermsOfUseBtn}
                 onPress={() =>
                   Linking.openURL(
-                    'https://www.termsfeed.com/live/df59e493-abff-4ac4-9ec1-366a92930b71',
+                    'https://www.termsfeed.com/live/95958dbe-1f11-40bf-8198-ad9a174d6f95',
                   )
                 }
               >
